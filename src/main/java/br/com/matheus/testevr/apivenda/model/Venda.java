@@ -39,24 +39,24 @@ public class Venda {
         }
 
         adicionarProdutosVenda(listaVendaProdutos);
-        excluiProdutosDuplicados();
 
 
     }
 
     public void excluiProdutosDuplicados() {
 
-        for (Integer indexComparador = 0; indexComparador < listaProdutos.size(); indexComparador++) {
+        for (int indexComparador = 0; indexComparador < listaProdutos.size(); indexComparador++) {
 
             VendaProduto vendaProdutoComparador = listaProdutos.get(indexComparador);
 
             for (int indexComparado = indexComparador; indexComparado < listaProdutos.size(); indexComparado++) {
                 VendaProduto vendaProdutoComparado = listaProdutos.get(indexComparado);
 
-                if (vendaProdutoComparador == vendaProdutoComparado && indexComparado != indexComparador) {
+                if (vendaProdutoComparador.getIdProduto().equals(vendaProdutoComparado.getIdProduto()) && indexComparado != indexComparador) {
 
                     vendaProdutoComparador.adicionaQuantidade(vendaProdutoComparado.getQuantidadeVenda());
-                    listaProdutos.remove(vendaProdutoComparado);
+                    listaProdutos.remove(indexComparado);
+                    indexComparado--;
 
                 }
 
@@ -66,13 +66,13 @@ public class Venda {
 
     }
 
-    public void alterarDadosVenda(List<Long> produtosRemovidos, List<CadastroProdutoVendaDTO> cadastroProdutoVendaDTOS, Cliente cliente) {
+    public void alterarDadosVenda(List<Long> produtosRemovidos, List<CadastroProdutoVendaDTO> produtosAdicionados, Cliente cliente) {
 
         this.cliente = cliente;
         List<VendaProduto> listaVendaProdutos = new ArrayList<>();
         removerProdutoVenda(produtosRemovidos);
 
-        for (CadastroProdutoVendaDTO produtoVendaDTO : cadastroProdutoVendaDTOS) {
+        for (CadastroProdutoVendaDTO produtoVendaDTO : produtosAdicionados) {
 
             listaVendaProdutos.add(new VendaProduto(produtoVendaDTO));
 
@@ -95,28 +95,14 @@ public class Venda {
 
     public void adicionarProdutosVenda(List<VendaProduto> listaProdutoAdicionados) {
 
-        for (VendaProduto produtoVenda : listaProdutos) {
-
-            for (VendaProduto produtoAdicionado : listaProdutoAdicionados) {
-
-                if (produtoVenda.getIdProduto().equals(produtoAdicionado.getIdProduto())) {
-
-                    produtoVenda.adicionaQuantidade(produtoAdicionado.getQuantidadeVenda());
-                    listaProdutoAdicionados.remove(produtoAdicionado);
-
-                }
-
-            }
-
-        }
-
         listaProdutos.addAll(listaProdutoAdicionados);
+        excluiProdutosDuplicados();
 
     }
 
     public void finalizarVenda(Map<String, ProdutoAPIErro> listaProdutosErro) {
 
-        listaProdutos.forEach(produto -> {
+        this.listaProdutos.forEach(produto -> {
 
             //Se produto não for encontrado na lista de erro finaliza o produto
             if (!listaProdutosErro.containsKey(produto.getIdProduto().toString())) {

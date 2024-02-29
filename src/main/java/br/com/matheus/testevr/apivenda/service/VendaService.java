@@ -3,7 +3,6 @@ package br.com.matheus.testevr.apivenda.service;
 import br.com.matheus.testevr.apivenda.dto.relatorio.RelatorioConsolidadoDTO;
 import br.com.matheus.testevr.apivenda.dto.venda.AlteracaoDadosVendaDTO;
 import br.com.matheus.testevr.apivenda.dto.venda.CadastroVendaDTO;
-import br.com.matheus.testevr.apivenda.exception.AvisoException;
 import br.com.matheus.testevr.apivenda.model.Cliente;
 import br.com.matheus.testevr.apivenda.model.ProdutoAPIErro;
 import br.com.matheus.testevr.apivenda.model.Venda;
@@ -11,6 +10,7 @@ import br.com.matheus.testevr.apivenda.repository.ClienteRepository;
 import br.com.matheus.testevr.apivenda.repository.ProdutoAPIRepository;
 import br.com.matheus.testevr.apivenda.repository.VendaRepository;
 import br.com.matheus.testevr.apivenda.validation.venda.alteracao.ValidacaoAlteracaoVenda;
+import com.google.gson.Gson;
 import jakarta.persistence.Tuple;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,6 +33,9 @@ public class VendaService {
     private ClienteRepository clienteRepository;
 
     @Autowired
+    Gson gson;
+
+    @Autowired
     private List<ValidacaoAlteracaoVenda> validacaoAlteracaoVendas;
 
     public List<Venda> listarVendas() {
@@ -47,7 +50,7 @@ public class VendaService {
 
     }
 
-    public void finalizarVenda(Long idVenda) throws IOException, InterruptedException {
+    public String finalizarVenda(Long idVenda) throws IOException, InterruptedException {
 
         validacaoAlteracaoVendas.forEach(validacao -> validacao.validar(idVenda));
 
@@ -59,10 +62,7 @@ public class VendaService {
 
         vendaRepository.save(venda);
 
-        if (listaProdutosErro.size() > 0) {
-            throw new AvisoException("Venda finalizada parcialmente");
-        }
-
+        return gson.toJson(listaProdutosErro);
 
     }
 

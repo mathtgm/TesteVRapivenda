@@ -11,7 +11,7 @@ public class Cliente {
     @Column(length = 60)
     private String nome;
     @Column(length = 14)
-    private String identificacao;
+    private String documento;
 
     @Column(length = 60)
     private String razaoSocial;
@@ -20,9 +20,9 @@ public class Cliente {
     public Cliente() {
     }
 
-    public Cliente(String nome, String identificacao, String razaoSocial) {
+    public Cliente(String nome, String documento, String razaoSocial) {
         this.nome = nome;
-        this.identificacao = identificacao;
+        this.documento = documento;
         this.razaoSocial = razaoSocial;
     }
 
@@ -51,11 +51,11 @@ public class Cliente {
         return id;
     }
 
-    public String getIdentificacao() {
-        return identificacao;
+    public String getDocumento() {
+        return documento;
     }
 
-    public void setIdentificacao(String identificacao) {
-        this.identificacao = identificacao;
+    public void setDocumento(String documento) {
+        this.documento = documento;
     }
 }

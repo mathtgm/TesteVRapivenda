@@ -3,7 +3,6 @@ package br.com.matheus.testevr.apivenda.controller;
 import br.com.matheus.testevr.apivenda.dto.relatorio.RelatorioConsolidadoDTO;
 import br.com.matheus.testevr.apivenda.dto.venda.AlteracaoDadosVendaDTO;
 import br.com.matheus.testevr.apivenda.dto.venda.CadastroVendaDTO;
-import br.com.matheus.testevr.apivenda.exception.AvisoException;
 import br.com.matheus.testevr.apivenda.exception.ValidacaoException;
 import br.com.matheus.testevr.apivenda.model.Venda;
 import br.com.matheus.testevr.apivenda.service.VendaService;
@@ -33,9 +32,18 @@ public class VendaController {
     public ResponseEntity<String> finalizar(@PathVariable Long idVenda) {
 
         try {
-            vendaService.finalizarVenda(idVenda);
 
-            return ResponseEntity.ok().body("Venda finalizada com sucesso");
+            String produtosPendentes = vendaService.finalizarVenda(idVenda);
+
+            if (produtosPendentes.isEmpty()) {
+
+                return ResponseEntity.ok().body("Venda finalizada com sucesso");
+
+            } else {
+
+                return ResponseEntity.status(207).body(produtosPendentes);
+
+            }
 
         } catch (IOException | InterruptedException mensagem) {
 
@@ -45,9 +53,6 @@ public class VendaController {
 
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mensagem.getMessage());
 
-        } catch (AvisoException mensagem) {
-
-            return ResponseEntity.status(207).body(mensagem.getMessage());
         }
 
     }
