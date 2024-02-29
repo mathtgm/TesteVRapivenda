@@ -6,6 +6,8 @@ import br.com.matheus.testevr.apivenda.model.ProdutoAPIRespostaHttp;
 import br.com.matheus.testevr.apivenda.model.VendaProduto;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -18,8 +20,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Service
+@Repository
 public class ProdutoAPIRepository {
+
+    @Value("${produtoAPI.url}")
+    private String urlAPIProduto;
 
     public Map<String, ProdutoAPIErro> baixaEstoqueEmLote(List<VendaProduto> listaVendaProduto) throws IOException, InterruptedException {
 
@@ -35,7 +40,7 @@ public class ProdutoAPIRepository {
 
         HttpClient httpClient = HttpClient.newHttpClient();
         HttpRequest httpRequest = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:3000/produtos/baixa"))
+                .uri(URI.create(urlAPIProduto + "/produtos/baixa"))
                 .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(listaProdutoAPI)))
                 .build();
 
